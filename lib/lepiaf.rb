@@ -2,17 +2,36 @@
 require 'twitter'
 require 'dotenv'
 
-Dotenv.load
+Dotenv.load('../.env')
 
  # n'oublie pas les lignes pour Dotenv ici…
  
  # quelques lignes qui appellent les clés d'API de ton fichier .env
  client = Twitter::REST::Client.new do |config|
-   config.consumer_key        = ENV["TWITTER_CONSUMER_KEY"]
-   config.consumer_secret     = ENV["TWITTER_CONSUMER_SECRET"]
-   config.access_token        = ENV["TWITTER_ACCESS_TOKEN"]
-   config.access_token_secret = ENV["TWITTER_ACCESS_TOKEN_SECRET"]
+   config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
+   config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
+   config.access_token        = ENV['TWITTER_ACCESS_TOKEN']
+   config.access_token_secret = ENV['TWITTER_ACCESS_TOKEN_SECRET']
  end
  
  # ligne qui permet de tweeter sur ton compte
- client.update('Mon premier tweet en Ruby !!!!')
+ # client.update('Mon premier (et dernier) tweet avec un programme en Ruby !')
+
+ recipient = ["@erischon", "@etrecoachcom"]
+
+=begin
+recipient.each do |user|
+  client.update("Bonjour #{user} !")
+end
+
+client.search("#SeniorWhoCode", result_type: "recent").take(25).collect do |tweet|
+  client.favorite(tweet)
+end
+=end
+
+client.search("#SeniorWhoCode", result_type: "recent").take(25).collect do |tweet|
+  client.follow(tweet.user.screen_name) if tweet.user.screen_name.downcase != "erischon"
+end
+
+
+
